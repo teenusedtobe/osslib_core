@@ -1,6 +1,5 @@
 from sqlobject import *
 from conf import config_operate
-
 uri = config_operate.get_dbconfig_uri()
 sqlhub.processConnection = connectionForURI(uri)
 
@@ -14,8 +13,8 @@ class OsslibCommunityApi(SQLObject):
 
 
 class OsslibMetadata_2(SQLObject):
-    oss_id = IntCol(length=50,)
-    oss_from = IntCol(length=11)
+    community_id = IntCol(length=50,)
+    community_from = IntCol(length=11)
     oss_name = StringCol(length=50)
     oss_fullname = StringCol(length=100, unique=True)
     oss_create_time = StringCol(length=50)
@@ -45,8 +44,9 @@ class OsslibMetadata_2(SQLObject):
 class OsslibTopic(SQLObject):
     oss_id = IntCol(length=11)
     topic = StringCol(length=100)
-
-
+	
+	
+	
 class General(SQLObject):
     project_name = StringCol(length=255)
     generated = StringCol(length=255)
@@ -58,31 +58,27 @@ class General(SQLObject):
     total_commits = StringCol(length=255)
     authors = StringCol(length=255)
 
-
 class ActivityWeek (SQLObject):
     week=IntCol(length=11)
     commits=IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
+	
 class ActivityHour (SQLObject):
     hour = IntCol(length=11)
     commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class ActivityDay(SQLObject):
     day = StringCol(length=255)
     commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class ActivityHourOfWeek(SQLObject):
     weekday_hour = StringCol(length=255)
     commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class ActivityMonth(SQLObject):
     month = StringCol(length=255)
     commits = IntCol(length=11)
@@ -93,20 +89,17 @@ class ActivityYear(SQLObject):
     year = IntCol(length=11)
     commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class ActivityYearMonth(SQLObject):
     yearmonth = StringCol(length=255)
     commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class ActivityTimezone(SQLObject):
     timezone = StringCol(length=255)
     commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class AuthorList(SQLObject):
     author = StringCol(length=255)
     commits = IntCol(length=11)
@@ -119,16 +112,14 @@ class AuthorList(SQLObject):
     active_days = IntCol(length=11)
     by_commits = IntCol(length=11)
     project_name=StringCol(length=255)
-
-
+	
 class AuthorCumulated(SQLObject):
     date = StringCol(length=255)
     author = StringCol(length=255)
     cumulated_commits = IntCol(length=11)
     cumulated_lines = IntCol(length=11)
     project_name = StringCol(length=255)
-
-
+	
 class AuthorMonth(SQLObject):
     month = StringCol(length=255)
     author = StringCol(length=255)
@@ -136,8 +127,7 @@ class AuthorMonth(SQLObject):
     next_top5 = StringCol(length=255)
     author_number = IntCol(length=11)
     project_name = StringCol(length=255)
-
-
+	
 class AuthorYear(SQLObject):
     year = IntCol(length=11)
     author = StringCol(length=255)
@@ -146,82 +136,34 @@ class AuthorYear(SQLObject):
     author_number = IntCol(length=11)
     project_name = StringCol(length=255)
 
-
 class Domain(SQLObject):
     domain=StringCol(length=255)
     commits=StringCol(length=255)
     project_name = StringCol(length=255)
-
-
+	
 class FileDateCount(SQLObject):
-    date = StringCol(length=255)
-    files = IntCol(length=11)
+    date=StringCol(length=255)
+    files=IntCol(length=11)
     project_name = StringCol(length=255)
-
 
 class FileExtension(SQLObject):
-    extension = StringCol(length=255)
-    files = StringCol(length=255)
-    line = StringCol(length=255)
-    filesdividelines = IntCol(length=11)
+    extension=StringCol(length=255)
+    files=StringCol(length=255)
+    line=StringCol(length=255)
+    filesdividelines=IntCol(length=11)
     project_name = StringCol(length=255)
-
-
+ 
 class LineDateCount(SQLObject):
-    date = StringCol(length=255)
-    line = IntCol(length=11)
+    date=StringCol(length=255)
+    line=IntCol(length=11)
     project_name = StringCol(length=255)
-
 
 class Tag(SQLObject):
-    name = StringCol(length=255)
-    date = StringCol(length=255)
-    commits = IntCol(length=11)
-    authors = StringCol(length=3000)
-    project_name = StringCol(length=255)
+    name=StringCol(length=255)
+    date=StringCol(length=255)
+    commits=IntCol(length=11)
+    authors=StringCol(length=3000)
+    project_name=StringCol(length=255)
+ 
 
-
-class OsslibCommunity(SQLObject):
-    user_id = IntCol(length=11)
-    community_name = StringCol(length=256)
-    create_time = DateCol()
-    status = IntCol(length=11)
-
-
-class OsslibCommunityList(SQLObject):
-    community_id = IntCol(length=11)
-    oss_id = IntCol(length=11)
-    oss_name = StringCol(length=256)
-    add_time = DateCol()
-    status = IntCol(length=11)
-
-class OsslibStatistic(SQLObject):
-    community_id = IntCol(length=11)
-    issue_count = IntCol(length=11)
-    issue_close_count = IntCol(length=11)
-    pull_count = IntCol(length=11)
-    pull_merged_count = IntCol(length=11)
-    loc = IntCol(length=11)
-    foc = IntCol(length=11)
-    coc = IntCol(length=11)
-    doc = IntCol(length=11)
-    update_time = StringCol(length=100)
-
-
-class OsslibIssue(SQLObject):
-    issue_user_type = StringCol(length=50)
-    issue_state = IntCol(length=11)
-    oss_id = IntCol(length=11)
-    user_id = IntCol(length=11)
-    issue_close_time = StringCol(length=100)
-    issue_create_time = StringCol(length=100)
-    update_time = StringCol(length=100)
-    issue_comment_count = IntCol(length=11)
-    issue_id = IntCol(length=11)
-    issue_number = IntCol(length=11)
-    issue_update_time = StringCol(length=100)
-    issue_body = StringCol(length=5000)
-    issue_title = StringCol(length=500)
-
-
-
+	
