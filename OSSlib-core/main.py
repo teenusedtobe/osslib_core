@@ -1,8 +1,10 @@
 from model.common_model import *
+
 from multiprocessing.managers import BaseManager
 import queue
  
 from core.code_analysis import *
+from core.statistics import *
  
 task_queue = queue.Queue()
  
@@ -16,17 +18,19 @@ def return_task_queue():
     return task_queue
 class QueueManager(BaseManager): pass
 
+def main_process():
+    CodeAnalysis().get_code()
+    #CodeAnalysis().code_analysis()
+    Statistics().oss_stat()
 
 if __name__ == '__main__':
-    #conclude_similar()
-    # 通过多个社区api获取repo列表,
-    osslib_community_list = OsslibCommunityApi.select()
     '''
-    for per_software_community in osslib_community_list:
-       eval(per_software_community.community_name)().get_oss_list(2)
-	'''
-    #CodeAnalysis().get_code()
-    #CodeAnalysis().code_analysis()
+    sched = BlockingScheduler(timezone='MST')
+    sched.add_job(main_process, 'interval', seconds=3)
+    sched.start()
+    '''
+    Statistics().oss_stat()
+
 
     #train()
 

@@ -41,10 +41,15 @@ def get_graphql(url, query, header):
     except:
         traceback.print_exc()
 
+
 class QueueManager(BaseManager): pass
 
 
+class DictManager(BaseManager): pass
+
+
 task_queue = queue.Queue()
+task_dict = dict()
 
 
 def return_task_queue():
@@ -52,9 +57,20 @@ def return_task_queue():
     return task_queue
 
 
+def return_task_dict():
+    global task_dict
+    return task_dict
+
 def get_thread_task_queue(queue_name):
     QueueManager.register(queue_name, callable=return_task_queue)
     manager = QueueManager(address=('127.0.0.1', 34512), authkey=b'abc')
+    manager.start()
+    return manager
+
+
+def get_thread_task_dict(dict_name):
+    DictManager.register(dict_name, callable=return_task_dict)
+    manager = DictManager(address=('127.0.0.1', 34513), authkey=b'bcd')
     manager.start()
     return manager
 
