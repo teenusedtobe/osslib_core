@@ -13,8 +13,8 @@ class OsslibCommunityApi(SQLObject):
 
 
 class OsslibMetadata_2(SQLObject):
-    community_id = IntCol(length=50,)
-    community_from = IntCol(length=11)
+    oss_id = IntCol(length=50,)
+    oss_from = IntCol(length=11)
     oss_name = StringCol(length=50)
     oss_fullname = StringCol(length=100, unique=True)
     oss_create_time = StringCol(length=50)
@@ -166,4 +166,73 @@ class Tag(SQLObject):
     project_name=StringCol(length=255)
  
 
-	
+class OsslibCommunity(SQLObject):
+    user_id = IntCol(length=11)
+    community_name = StringCol(length=255)
+    create_time = StringCol(length=100)
+    status = IntCol(length=11)
+
+
+class OsslibCommunityList(SQLObject):
+    community_id = IntCol(length=11)
+    oss_id = IntCol(length=11)
+    add_time = StringCol(length=100)
+    status = IntCol(length=11)
+    oss_name = StringCol(length=255)
+
+
+class OsslibStatistic(SQLObject):
+    community_id = IntCol(length=11)
+    issue_count = IntCol(length=11)
+    issue_close_count = IntCol(length=11)
+    pull_count = IntCol(length=11)
+    pull_merged_count = IntCol(length=11)
+    loc = IntCol(length=11)
+    doc = IntCol(length=11)
+    foc = IntCol(length=11)
+    coc = IntCol(length=11)
+    issue_comment_count = IntCol(length=11)
+    issue_close_time = FloatCol()
+    core_issue_count = IntCol(length=11)
+    update_time = StringCol(length=255)
+
+class OsslibIssue(SQLObject):
+    issue_user_type = StringCol(length=100)
+    issue_state = IntCol(length=11)
+    oss_id = IntCol(length=11)
+    user_id = IntCol(length=11)
+    issue_close_time = StringCol(length=100)
+    issue_create_time = StringCol(length=100)
+    update_time = StringCol(length=100)
+    issue_comment_count = IntCol(length=11)
+    issue_id = IntCol(length=11)
+    issue_number = IntCol(length=11)
+    issue_update_time = StringCol(length=100)
+    issue_body = StringCol(length=5000)
+    issue_title = StringCol(length=5000)
+
+
+class OsslibPull(SQLObject):
+    pull_id = IntCol(length=11)
+    pull_number = IntCol(length=11)
+    pull_state = IntCol(length=11)
+    pull_author_association = StringCol(length=100)
+    pull_create_time = StringCol(length=100)
+    pull_update_time = StringCol(length=100)
+    pull_closed_time = StringCol(length=100)
+    pull_merged_time = StringCol(length=100)
+    pull_is_merged = IntCol(length=11)
+    update_time = StringCol(length=100)
+    user_id = IntCol(length=11)
+    oss_id = IntCol(length=11)
+    pull_title = StringCol(length=100)
+    pull_body = StringCol(length=100)
+    pull_is_reviewed = IntCol(length=11)
+    pull_comments = IntCol(length=11)
+    review_comments = IntCol(length=11)
+    request_reviewer = StringCol(length=500)
+
+
+
+
+
