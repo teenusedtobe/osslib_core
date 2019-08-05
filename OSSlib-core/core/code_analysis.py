@@ -16,15 +16,14 @@ class CodeAnalysis:
     def get_code(self):
         
         sched = BlockingScheduler(timezone='MST')
-        print('acting')
-		#表示从周一到周五9点30分10秒更新
+        #表示从周一到周五9点30分10秒更新
         #sched.add_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10')
         sched.add_job(self.get_code_true, 'interval',  seconds=300)
         sched.start()
-  
-         	
+ 
+            
          
-	 
+     
     def  get_code_true(self):
         print ("new")
         for i in range(3):
@@ -70,7 +69,7 @@ class CodeAnalysis:
             if return_info == 1:
                 oss_info = OsslibMetadata_2.get(oss_id)
                 oss_info.oss_local_path = 'data/' + oss_name
-			
+            
             time1=time.clock()
            
           
@@ -80,15 +79,19 @@ class CodeAnalysis:
         Year = int(datetime.datetime.now().strftime(format)[:4])
         weekdays = ['mon','tue','wed','thu','fri','sat','sun']
         months=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
-        users=OsslibDeveloper.select(OsslibDeveloper.q.oss_id==102904613)
-        sorted(users,key=lambda user :user.user_commit_count)
-        user_id=[]
-        for info in users:
-            user_id.append(info.user_id)
+       
         
          
-        for oss_info in OsslibMetadata_2.select(OsslibMetadata_2.q.id=='45809'):
+        for oss_info in OsslibMetadata_2.select(OsslibMetadata_2.q.id == '45808'):
+
             prevdir = os.getcwd()
+            users=OsslibDeveloper.select(OsslibDeveloper.q.oss_id == oss_info.oss_id)
+            sorted(users,key = lambda user :user.user_commit_count)
+            user_id=[]
+            for info in users:
+                user_id.append(info.user_id)
+            count = 0;
+      
             print('********************************************')
             if oss_info.oss_local_path != '':
                 try:
@@ -98,9 +101,12 @@ class CodeAnalysis:
                     data.collect(absgitpath)
                     data.refine()
                    
-           
+                    oss_info.oss_line_count = data.getTotalLOC()
+                    oss_info.oss_developer_count = data.getTotalAuthors()
+                    oss_info.oss_file_count = data.getTotalFiles()
+                    oss_info.oss_commit_count = data.getTotalCommits()
                     
-					#General表
+                    #General表
                     for info in OsslibGeneral.select(OsslibGeneral.q.oss_id == oss_info.oss_id):
                         info.delete(info.id)                                        
                     item=dict()
@@ -137,7 +143,7 @@ class CodeAnalysis:
                             item['commits'] = commits
                             OsslibActivityWeek(**item)
                  
-				
+                
                     #24hour表
                     for info in OsslibActivityHour.select(OsslibActivityHour.q.oss_id == oss_info.oss_id):
                         info.delete(info.id)
@@ -161,7 +167,7 @@ class CodeAnalysis:
                             item['commits'] = day_of_week[i]
                             item['day'] = weekdays[i]
                             OsslibActivityDay(**item)
-						
+                        
                
                     #hour_week表
                     for info in OsslibActivityHourOfWeek.select(OsslibActivityHourOfWeek.q.oss_id == oss_info.oss_id):
@@ -173,7 +179,7 @@ class CodeAnalysis:
                             try:
                                 commits = data.activity_by_hour_of_week[weekday][hour]
                                 item['commits'] = commits
-                                item['weekday_hour'] = '%s_%d'%(weekdays[weekday],hour)									
+                                item['weekday_hour'] = '%s_%d'%(weekdays[weekday],hour)                                 
                                 OsslibActivityHourOfWeek(**item)
                             except KeyError:
                                 pass
@@ -189,7 +195,7 @@ class CodeAnalysis:
                             commits = data.activity_by_month_of_year[mm]
                             item['commits'] = commits
                             item['month'] = months[mm-1]
-                            OsslibActivityMonth(**item)	
+                            OsslibActivityMonth(**item) 
                
                     #year表
                     for info in OsslibActivityYear.select(OsslibActivityYear.q.oss_id == oss_info.oss_id):
@@ -222,15 +228,15 @@ class CodeAnalysis:
                     for i in sorted(data.commits_by_timezone.keys(), key = lambda n : int(n)):
                         item['commits'] = data.commits_by_timezone[i]
                         item['timezone'] = i                                                                                                    
-                        OsslibActivityTimezone(**item)
-                  
+                        OsslibActivityTimezone(**item)                  
+                        
                     #Author
                     #list
                     for info in OsslibAuthorList.select(OsslibAuthorList.q.oss_id == oss_info.oss_id):
                         info.delete(info.id)
-                    item = dict()	
+                    item = dict()   
                     item['oss_id'] = oss_info.oss_id;
-                    count=0						
+                    count=0                     
                     for author in data.getAuthors(conf['max_authors']):
                         info = data.getAuthorInfo(author)
                         item['user_id'] = user_id[count]
@@ -283,10 +289,10 @@ class CodeAnalysis:
                         next = ', '.join(authors[1:conf['authors_top']+1])
                         item['month'] = yymm
                         item['author'] = authors[0]
-                        item['commits']	= '%d (%.2f%% of %d)'%( commits, (100.0 * commits) / data.commits_by_month[yymm], data.commits_by_month[yymm])
+                        item['commits'] = '%d (%.2f%% of %d)'%( commits, (100.0 * commits) / data.commits_by_month[yymm], data.commits_by_month[yymm])
                         item['next_top5'] = ', '.join(authors[1:conf['authors_top']+1])
                         item['author_number'] = len(authors)
-                        OsslibAuthorMonth(**item)		
+                        OsslibAuthorMonth(**item)       
                     
                     #year(author)表
                     for info in OsslibAuthorYear.select(OsslibAuthorYear.q.oss_id == oss_info.oss_id):
@@ -301,10 +307,10 @@ class CodeAnalysis:
                         next = ', '.join(authors[1:conf['authors_top']+1])
                         item['year'] = yy
                         item['author'] = authors[0]
-                        item['commits']	= '%d (%.2f%% of %d)'%( commits, (100.0 * commits) / data.commits_by_year[yy], data.commits_by_year[yy])
+                        item['commits'] = '%d (%.2f%% of %d)'%( commits, (100.0 * commits) / data.commits_by_year[yy], data.commits_by_year[yy])
                         item['next_top5'] = ', '.join(authors[1:conf['authors_top']+1])
                         item['author_number'] = len(authors)
-                        OsslibAuthorYear(**item)						
+                        OsslibAuthorYear(**item)                        
                     
                     #domains表
                     for info in OsslibDomain.select(OsslibDomain.q.oss_id == oss_info.oss_id):
@@ -325,7 +331,7 @@ class CodeAnalysis:
                         OsslibDomain(**item)
                     
                     #files
-					#count by date
+                    #count by date
                     for info in OsslibFileDateCount.select(OsslibFileDateCount.q.oss_id == oss_info.oss_id):
                         info.delete(info.id)
                     item = dict()
@@ -370,7 +376,7 @@ class CodeAnalysis:
                         info.delete(info.id)
                     item = dict()
                     item['oss_id'] = oss_info.oss_id;
-                    tags_sorted_by_date_desc = list(map(lambda el : el[1], reversed(sorted(list(map(lambda el : (el[1]['date'], el[0]), data.tags.items()))))))						
+                    tags_sorted_by_date_desc = list(map(lambda el : el[1], reversed(sorted(list(map(lambda el : (el[1]['date'], el[0]), data.tags.items()))))))                     
                     for tag in tags_sorted_by_date_desc:
                         authorinfo = []
                         authors_by_commits = getkeyssortedbyvalues(data.tags[tag]['authors'])
@@ -382,12 +388,13 @@ class CodeAnalysis:
                         item['authors'] = ', '.join(authorinfo)
                         OsslibTag(**item)
                      
- 				
-						
-						
+                
+                        
+                        
                 except BaseException as ex:
                     print(ex)
                     pass
                 finally:
                     os.chdir(prevdir)
+              
      
