@@ -16,17 +16,17 @@ GNUPLOT_COMMON = 'set terminal png transparent size 640,240\nset size 1.0,1.0\n'
 ON_LINUX = (platform.system() == 'Linux')
 WEEKDAYS = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
 conf = {
-	'max_domains': 10,
-	'max_ext_length': 10,
-	'style': 'gitstats.css',
-	'max_authors': 20,
-	'authors_top': 5,
-	'commit_begin': '',
-	'commit_end': 'HEAD',
-	'linear_linestats': 1,
-	'project_name': '',
-	'processes': 8,
-	'start_date': ''
+    'max_domains': 10,
+    'max_ext_length': 10,
+    'style': 'gitstats.css',
+    'max_authors': 20,
+    'authors_top': 5,
+    'commit_begin': '',
+    'commit_end': 'HEAD',
+    'linear_linestats': 1,
+    'project_name': '',
+    'processes': 8,
+    'start_date': ''
 }
 
 exectime_internal = 0.0
@@ -66,39 +66,39 @@ def getlogrange(defaultrange = 'HEAD', end_only = True):
     return commit_range
 
 def getcommitrange(defaultrange = 'HEAD', end_only = False):
-	if len(conf['commit_end']) > 0:
-		if end_only or len(conf['commit_begin']) == 0:
-			return conf['commit_end']
-		return '%s..%s' % (conf['commit_begin'], conf['commit_end'])
-	return defaultrange
+    if len(conf['commit_end']) > 0:
+        if end_only or len(conf['commit_begin']) == 0:
+            return conf['commit_end']
+        return '%s..%s' % (conf['commit_begin'], conf['commit_end'])
+    return defaultrange
 
 def getkeyssortedbyvalues(dict):
-	return list(map(lambda el : el[1], sorted(map(lambda el : (el[1], el[0]), dict.items()))))
+    return list(map(lambda el : el[1], sorted(map(lambda el : (el[1], el[0]), dict.items()))))
 
 # dict['author'] = { 'commits': 512 } - ...key(dict, 'commits')
 def getkeyssortedbyvaluekey(d, key):
-	return list(map(lambda el : el[1], sorted(map(lambda el : (d[el][key], el), d.keys()))))
+    return list(map(lambda el : el[1], sorted(map(lambda el : (d[el][key], el), d.keys()))))
 
 def getstatsummarycounts(line):
-	numbers = re.findall('\d+', line)
-	if   len(numbers) == 1:
-		# neither insertions nor deletions: may probably only happen for "0 files changed"
-		numbers.append(0);
-		numbers.append(0);
-	elif len(numbers) == 2 and line.find('(+)') != -1:
-		numbers.append(0);    # only insertions were printed on line
-	elif len(numbers) == 2 and line.find('(-)') != -1:
-		numbers.insert(1, 0); # only deletions were printed on line
-	return numbers
+    numbers = re.findall('\d+', line)
+    if   len(numbers) == 1:
+        # neither insertions nor deletions: may probably only happen for "0 files changed"
+        numbers.append(0);
+        numbers.append(0);
+    elif len(numbers) == 2 and line.find('(+)') != -1:
+        numbers.append(0);    # only insertions were printed on line
+    elif len(numbers) == 2 and line.find('(-)') != -1:
+        numbers.insert(1, 0); # only deletions were printed on line
+    return numbers
 
 VERSION = 0
 def getversion():
-	global VERSION
-	if VERSION == 0:
-		gitstats_repo = os.path.dirname(os.path.abspath(__file__))
-		VERSION = getpipeoutput(["git --git-dir=%s/.git --work-tree=%s rev-parse --short %s" %
-			(gitstats_repo, gitstats_repo, getcommitrange('HEAD').split('\n')[0])])
-	return VERSION
+    global VERSION
+    if VERSION == 0:
+        gitstats_repo = os.path.dirname(os.path.abspath(__file__))
+        VERSION = getpipeoutput(["git --git-dir=%s/.git --work-tree=%s rev-parse --short %s" %
+            (gitstats_repo, gitstats_repo, getcommitrange('HEAD').split('\n')[0])])
+    return VERSION
 
 
 def getgitversion():
@@ -107,19 +107,22 @@ def getgitversion():
  
 
 def getnumoffilesfromrev(time_rev):
-	"""
-	Get number of files changed in commit
-	"""
-	time, rev = time_rev
-	return (int(time), rev, int(getpipeoutput(['git ls-tree -r --name-only "%s"' % rev, 'find /v /c ""']).split('\n')[0]))
+    """
+    Get number of files changed in commit
+    """
+    time, rev = time_rev
+    return (int(time), rev, int(getpipeoutput(['git ls-tree -r --name-only "%s"' % rev, 'find /v /c ""']).split('\n')[0]))
 
 def getnumoflinesinblob(ext_blob):
-	"""
-	Get number of lines in blob
-	"""
-	ext, blob_id = ext_blob
-	return (ext, blob_id, int(getpipeoutput(['git cat-file blob %s' % blob_id, 'find /v /c ""']).split()[0]))
-
+    """
+    Get number of lines in blob
+    """
+    ext, blob_id = ext_blob
+    try:
+        return (ext, blob_id, int(getpipeoutput(['git cat-file blob %s' % blob_id, 'find /v /c ""']).split()[0]))
+    except:
+        return (ext, blob_id, 0)
+        
 
 class DataCollector:
     """Manages data collection from a revision control repository."""
@@ -721,5 +724,5 @@ class GitDataCollector(DataCollector):
         stamp = int(getpipeoutput(['git log --pretty=format:%%at "%s" -n 1' % rev]))
         return datetime.datetime.fromtimestamp(stamp).strftime('%Y-%m-%d')
      
-		
+        
  
