@@ -1,14 +1,27 @@
 from model.common_model import *
-
 from multiprocessing.managers import BaseManager
+from scrapy import cmdline
+from apscheduler.schedulers.background import BlockingScheduler
+from multiprocessing import Process
 import queue
  
-from core.code_analysis import *
-from core.statistics import *
  
-task_queue = queue.Queue()
+from core.code_analysis import *
+ 
  
 
+task_queue = queue.Queue()
+ 
+def run():
+    cmdline.execute("scrapy crawl repos".split())
+
+def processrun():
+    p = Process(target=run,)
+    p.start()
+    p.join()
+
+    
+ 
 def read_file(q, i):
     while(True):
         pass
@@ -18,23 +31,28 @@ def return_task_queue():
     return task_queue
 class QueueManager(BaseManager): pass
 
-def main_process():
-    CodeAnalysis().get_code()
-    #CodeAnalysis().code_analysis()
-    Statistics().oss_stat()
 
 if __name__ == '__main__':
+    #conclude_similar()
+    # 通过多个社区api获取repo列表,
+    osslib_community_list = OsslibCommunityApi.select()
     '''
-    sched = BlockingScheduler(timezone='MST')
-    sched.add_job(main_process, 'interval', seconds=3)
-    sched.start()
+    for per_software_community in osslib_community_list:
+       eval(per_software_community.community_name)().get_oss_list(2)
     '''
-    Statistics().oss_stat()
-
+    #CodeAnalysis().get_code()
+    #CodeAnalysis().code_analysis()
 
     #train()
-
-
+ 
+        
+    sched = BlockingScheduler(timezone='MST')
+    #表示从周一到周五9点30分10秒更新
+    #sched.add_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10')
+    sched.add_job(processrun, 'interval',  seconds=500)
+    sched.add_job(CodeAnalysis().process, 'interval', seconds=500)
+    sched.start()
+    
 
 
 
