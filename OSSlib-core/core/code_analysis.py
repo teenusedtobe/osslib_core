@@ -5,6 +5,7 @@ from core.datacollector import *
 from core.common import *
 from apscheduler.schedulers.background import BlockingScheduler
 import datetime
+import time
 
 # 代码分析
 class CodeAnalysis:
@@ -12,19 +13,15 @@ class CodeAnalysis:
         manager = get_thread_task_queue('getcoude_queue')
         self.task_queue = manager.getcoude_queue()
 
-    # 获取代码
-    def get_code(self):
-        
-        sched = BlockingScheduler(timezone='MST')
-        #表示从周一到周五9点30分10秒更新
-        #sched.add_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10')
-        sched.add_job(self.get_code_true, 'interval',  seconds=300)
-        sched.start()
+    def process(self):
+        time.sleep(200)
+        self.get_code()
+        self.code_analysis()
  
             
          
-     
-    def  get_code_true(self):
+    #获取代码
+    def  get_code(self):
         print ("new")
         for i in range(3):
             p = multiprocessing.Process(target=self._get_code_process, args=(self.task_queue, i,))
@@ -82,7 +79,7 @@ class CodeAnalysis:
        
         
          
-        for oss_info in OsslibMetadata_2.select(OsslibMetadata_2.q.id == '45808'):
+        for oss_info in OsslibMetadata_2.select(OsslibMetadata_2.q.id == '45809'):
 
             prevdir = os.getcwd()
             users=OsslibDeveloper.select(OsslibDeveloper.q.oss_id == oss_info.oss_id)
