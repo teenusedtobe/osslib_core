@@ -19,6 +19,11 @@ def processrun():
     p = Process(target=run,)
     p.start()
     p.join()
+    
+def job():
+    processrun()
+    CodeAnalysis().process()
+    
 
     
  
@@ -44,14 +49,15 @@ if __name__ == '__main__':
     #CodeAnalysis().code_analysis()
 
     #train()
- 
-        
+  
     sched = BlockingScheduler(timezone='MST')
     #表示从周一到周五9点30分10秒更新
     #sched.add_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10')
-    sched.add_job(processrun, 'interval',  seconds=500)
-    sched.add_job(CodeAnalysis().process, 'interval', seconds=500)
+ 
+    sched.add_job(job, 'interval', seconds=1000)
     sched.start()
+ 
+    
     
 
 
